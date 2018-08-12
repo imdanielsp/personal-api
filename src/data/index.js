@@ -17,7 +17,7 @@ export default class DataManager {
       resolve(
         new Profile(
           'Daniel Santos',
-          '`https://s3.us-east-2.amazonaws.com/daniel-personal-api/profile-pic-0`',
+          'https://s3.us-east-2.amazonaws.com/daniel-personal-api/profile-pic-0',
           'Software Engineer - Computer Scientist',
           'I am passionate about system design and architecture development, IoT devices, machine learning and network communications. I enjoy working in an agile, team-driven environment and love collaborating with people. I live by two doctrines; learn-it-all and that the only true wisdom is in knowing that I know nothing.',
           'dsantosp12@gmail.com',
@@ -67,7 +67,7 @@ export default class DataManager {
         Key: `profile-pic-${id}`,
         Body: buffer,
         ContentEncoding: 'base64',
-        ContentType: 'image/jpeg',
+        ContentType: 'image/png',
         ACL: 'public-read'
       }, err => {
         if (err) return reject(err);
