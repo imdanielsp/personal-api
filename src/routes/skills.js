@@ -15,17 +15,26 @@ SkillRouter.get('/:id', (req, res, next) => {
 SkillRouter.get('/', (req, res) => {
   DataManager.getSkills(
     req.query.limit || 5
-  ).then((skills) => {
-    res.json(skills)
-  }).catch((err) => {
+  ).then(skills => {
+    res.json(skills);
+  }).catch(() => {
     res.sendStatus(404);
+  });
+});
+
+SkillRouter.post('/', (req, res) => {
+  DataManager.addSkill(req.params).then(skill => {
+    res.status = 201;
+    res.json(skill);
+  }).catch(() => {
+    res.sendStatus(400);
   });
 });
 
 SkillRouter.get('/:id', (req, res) => {
   DataManager.getSkill(req.params.id).then(skill => {
     res.json(skill);
-  }).catch(err => {
+  }).catch(() => {
     res.sendStatus(404);
   });
 });

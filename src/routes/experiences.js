@@ -20,6 +20,14 @@ ExperienceRouter.get('/', (req, res) => {
   }).catch(err => res.sendStatus(404));
 });
 
+ExperienceRouter.post('/', (req, res) => {
+  DataManager.addExperience(req.params).then(experience => {
+    res.sendStatus(201);
+  }).catch(err => {
+    res.sendStatus(400);
+  });
+});
+
 ExperienceRouter.get('/:id', (req, res) => {
   DataManager.getExperience(req.params.id).then(experience => {
     res.json(experience);
