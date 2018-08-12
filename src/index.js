@@ -1,5 +1,6 @@
 import express from 'express';
 import { json } from 'body-parser';
+import cors from 'cors';
 
 // Dot Env Config
 import { config as DotEnv } from 'dotenv';
@@ -13,6 +14,8 @@ import { SkillRouter } from './routes/skills';
 
 const app = express();
 
+app.use(cors());
+
 app.use(json({ extended: false, limit: '15mb' }));
 
 app.use(MainRouter);
@@ -24,4 +27,6 @@ app.use((req, res, next) => {
   res.sendStatus(404);
 });
 
-app.listen(process.env.PORT);
+app.listen(process.env.PORT, () => {
+  console.log(`Listening @ ${process.env.PORT}`);
+});

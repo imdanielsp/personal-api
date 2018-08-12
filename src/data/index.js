@@ -13,7 +13,7 @@ const S3 = new AWS.S3({
 
 export default class DataManager {
   static getProfile() {
-    return new Promise((resolve/*, reject*/) => {
+    return new Promise((resolve, reject) => {
       resolve(
         new Profile(
           'Daniel Santos',
@@ -72,7 +72,7 @@ export default class DataManager {
       }, err => {
         if (err) return reject(err);
         // Future: update data base.
-        newProfile.profilePic = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/profile-pic-${id}`
+        newProfile.profilePic = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/profile-pic-${id}`;
         resolve(newProfile);
       });
     });
