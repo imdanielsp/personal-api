@@ -1,6 +1,7 @@
 import express from 'express';
 import { json } from 'body-parser';
 import cors from 'cors';
+import mongoose from 'mongoose';
 
 // Dot Env Config
 import { config as DotEnv } from 'dotenv';
@@ -13,6 +14,20 @@ import { ExperienceRouter } from './routes/experiences';
 import { SkillRouter } from './routes/skills';
 
 const app = express();
+
+// MongoDB
+mongoose.connect(
+  `mongodb://${process.env.DB_URL}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
+  {
+    useNewUrlParser: true,
+    user: process.env.DB_USER,
+    pass: process.env.DB_PASSWORD
+  }
+);
+
+const db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'connection'));
 
 app.use(cors());
 

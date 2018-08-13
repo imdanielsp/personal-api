@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { Router } from 'express';
 import DataManager from '../data';
 import Profile from '../models/profile';
@@ -38,4 +39,28 @@ MainRouter.put('/profile', (req, res) => {
     console.log(err);
     res.sendStatus(500);
   });
+});
+
+// Wakatime Proxy
+// GET /stats
+MainRouter.get('/stats', (req, res) => {
+  axios.get(process.env.WAKATIME_API_URL, {
+    headers: {
+      'Authorization': 'Basic ' + process.env.WAKATIME_API_KEY,
+    }
+  }).then(resp => {
+    return resp.data.data.languages;
+  }).then(languages => {
+    return languages.map(it => {
+      return {
+        name: it.name,
+        value: it.percent
+      };
+    });
+  }).then(stats => {
+    res.json(stats);
+  })
+    .catch(err => {
+      res.sendStatus(err.response.status);
+    });
 });

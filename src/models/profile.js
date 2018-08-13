@@ -1,4 +1,3 @@
-
 export default class Profile {
   constructor(name, profilePic, title, about, email, resume, location,
     education, languages, links, website) {
