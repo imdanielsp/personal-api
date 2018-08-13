@@ -49,7 +49,8 @@ export default class DataManager {
               name: 'twitter',
               url: 'https://twitter.com/itisdaniel_'
             }
-          ]
+          ],
+          'danielsantos.us'
         )
       );
     });
