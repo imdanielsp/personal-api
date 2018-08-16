@@ -1,6 +1,6 @@
 import Skill from '../models/skill';
 import Experience from '../models/experience';
-import Profile from '../models/profile';
+import { Profile } from '../models/profile';
 
 import AWS from 'aws-sdk';
 
@@ -14,45 +14,42 @@ const S3 = new AWS.S3({
 export default class DataManager {
   static getProfile() {
     return new Promise((resolve, reject) => {
-      resolve(
-        new Profile(
-          'Daniel Santos',
-          'https://s3.us-east-2.amazonaws.com/daniel-personal-api/profile-pic-0',
-          'Software Engineer - Computer Scientist',
-          'I am passionate about system design and architecture development, IoT devices, machine learning and network communications. I enjoy working in an agile, team-driven environment and love collaborating with people. I live by two doctrines; learn-it-all and that the only true wisdom is in knowing that I know nothing.',
-          'dsantosp12@gmail.com',
-          'http://github.com/imdanielsp',
-          'Lowell, MA',
-          [
-            {
-              school: 'University of Massachusetts - Lowell',
-              startDate: new Date(2015, 1),
-              endDate: new Date(2018, 12),
-              career: 'B.S. in Computer Science'
-            }
-          ],
-          ['English', 'Spanish'],
-          [
-            {
-              name: 'github',
-              url: 'https://github.com/imdanielsp/'
-            },
-            {
-              name: 'medium',
-              url: 'https://medium.com/@imdanielsp'
-            },
-            {
-              name: 'linkedin',
-              url: 'https://www.linkedin.com/in/danielsantosio/'
-            },
-            {
-              name: 'twitter',
-              url: 'https://twitter.com/itisdaniel_'
-            }
-          ],
-          'danielsantos.us'
-        )
+      Profile.find()
+        .then(profile => {
+          if (profile.length > 0) {
+            resolve(profile[0]);
+          } else {
+            const err = new Error('Profile is not yet created!');
+            reject(err);
+          }
+        }).catch(err => reject(err));
+    });
+  }
+
+  static createProfile(newProfile) {
+    return new Promise((resolve, reject) => {
+      const buffer = new Buffer.from(
+        newProfile.profilePic.replace(/^data:image\/\w+;base64,/, ''),
+        'base64'
       );
+
+      S3.putObject({
+        Bucket: 'daniel-personal-api',
+        Key: `profile-pic-${newProfile.email}`,
+        Body: buffer,
+        ContentEncoding: 'base64',
+        ContentType: 'image/png',
+        ACL: 'public-read'
+      }, err => {
+        if (err) return reject(err);
+        // Future: update data base.)
+        newProfile.profilePic = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/profile-pic-${newProfile.email}`;
+
+        const profile = new Profile(newProfile);
+        profile.save()
+          .then(profile => resolve(profile))
+          .catch(err => reject(err));
+      });
     });
   }
 
@@ -72,9 +69,20 @@ export default class DataManager {
         ACL: 'public-read'
       }, err => {
         if (err) return reject(err);
-        // Future: update data base.
+        // Future: update data base.)
         newProfile.profilePic = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/profile-pic-${id}`;
-        resolve(newProfile);
+
+        Profile.findOneAndUpdate(
+          {
+            email: newProfile.email
+          },
+          newProfile,
+          {
+            new: true,
+            runValidators: true
+          }
+        ).then(profile => resolve(profile))
+          .catch(err => reject(err));
       });
     });
   }

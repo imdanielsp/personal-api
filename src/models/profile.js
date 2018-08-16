@@ -1,16 +1,17 @@
-export default class Profile {
-  constructor(name, profilePic, title, about, email, resume, location,
-    education, languages, links, website) {
-    this.name = name;
-    this.profilePic = profilePic;
-    this.title = title;
-    this.about = about;
-    this.email = email;
-    this.resume = resume;
-    this.location = location;
-    this.links = links;
-    this.website = website;
-    this.languages = languages;
-    this.education = education;
-  }
-}
+import  mongoose from 'mongoose';
+
+const ProfileSchema = new mongoose.Schema({
+  name: String,
+  profilePic: String,
+  title: String,
+  about: String,
+  email: String,
+  resume: String,
+  location: String,
+  links: Array,
+  website: String,
+  languages: Array,
+  education: Array
+});
+
+export const Profile = mongoose.model('Profile', ProfileSchema);

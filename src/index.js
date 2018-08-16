@@ -1,6 +1,7 @@
 import express from 'express';
 import { json } from 'body-parser';
 import cors from 'cors';
+import morgan from 'morgan';
 import mongoose from 'mongoose';
 
 // Dot Env Config
@@ -29,10 +30,16 @@ const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection'));
 
+// Looger
+app.use(morgan('dev'));
+
+// CORS
 app.use(cors());
 
+// JSON Parser
 app.use(json({ extended: false, limit: '15mb' }));
 
+// App Routers
 app.use(MainRouter);
 app.use('/experiences', ExperienceRouter);
 app.use('/skills', SkillRouter);

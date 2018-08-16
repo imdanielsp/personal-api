@@ -13,30 +13,25 @@ MainRouter.get('/profile', (req, res) => {
   });
 });
 
+MainRouter.post('/profile', (req, res) => {
+  DataManager.createProfile(req.body)
+    .then(profile => res.json(profile))
+    .catch(err => {
+      console.log(err);
+      res.sendStatus(500);
+    });
+});
+
 MainRouter.put('/profile', (req, res) => {
   if (req.body.id === undefined) {
     return res.sendStatus(400);
   }
 
-  const newProfile = new Profile(
-    req.body.name,
-    req.body.profilePic,
-    req.body.title,
-    req.body.about,
-    req.body.email,
-    req.body.resume,
-    req.body.location,
-    req.body.education,
-    req.body.language,
-    req.body.links
-  );
-
   DataManager.updateProfile(
-    req.body.id, newProfile
+    req.body.id, req.body  // WTF is this Dan?
   ).then(newProfile => {
     res.json(newProfile);
   }).catch(err => {
-    console.log(err);
     res.sendStatus(500);
   });
 });
@@ -51,7 +46,18 @@ MainRouter.get('/stats', (req, res) => {
   }).then(resp => {
     return resp.data.data.languages;
   }).then(languages => {
-    return languages.map(it => {
+    let cValue = 0;
+    return languages.filter(it => it.percent > 5.0).map(it => {
+      // I don't write C, wakatime has bug where it marks .cxx files as C.
+      // Here I add the values of C to C++ because that's the real truth!
+      if (it.name === 'C') {
+        cValue = it.percent;
+        it.percent = 0;
+      }
+
+      if (it.name === 'C++')
+        it.percent += cValue;
+
       return {
         name: it.name,
         value: it.percent
