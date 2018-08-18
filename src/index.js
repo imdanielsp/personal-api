@@ -17,8 +17,7 @@ import { SkillRouter } from './routes/skills';
 const app = express();
 
 // MongoDB
-mongoose.connect(
-  `mongodb://${process.env.DB_URL}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
+mongoose.connect(process.env.MONGODB_URI,
   {
     useNewUrlParser: true,
     user: process.env.DB_USER,
