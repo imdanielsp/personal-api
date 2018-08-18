@@ -1,11 +1,15 @@
+import mongoose from 'mongoose';
 
-export default class Experience {
-  constructor(role, company, startDate, endDate, description, link) {
-    this.role = role;
-    this.company = company;
-    this.startDate = startDate;
-    this.endDate = endDate;
-    this.description = description;
-    this.link = link;
-  }
-}
+const ExperienceSchema = new mongoose.Schema({
+  role: String,
+  company: String,
+  startDate: Date,
+  endDate: {
+    type: Date,
+    required: false
+  },
+  description: String,
+  link: String
+});
+
+export const Experience = mongoose.model('Experience', ExperienceSchema);

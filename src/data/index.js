@@ -1,5 +1,5 @@
 import Skill from '../models/skill';
-import Experience from '../models/experience';
+import { Experience } from '../models/experience';
 import { Profile } from '../models/profile';
 
 import AWS from 'aws-sdk';
@@ -73,72 +73,48 @@ export default class DataManager {
         newProfile.profilePic = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/profile-pic-${id}`;
 
         Profile.findOneAndUpdate(
-          {
-            email: newProfile.email
-          },
-          newProfile,
-          {
-            new: true,
-            runValidators: true
-          }
-        ).then(profile => resolve(profile))
-          .catch(err => reject(err));
+          { '_id': id },
+          newProfile
+        ).then(doc => {
+          resolve(newProfile);
+        }).catch(err => reject(err));
       });
     });
   }
 
   static getExperience(id) {
     return new Promise((resolve, reject) => {
-      resolve(
-        new Experience(
-          'Software Development Intern - Smart Speaker Platform',
-          'Sonos, Inc.',
-          new Date(2018, 5),
-          undefined,
-          'Work on the platform that supports the integrations between smart voice assistants (Alexa, Google Assistant), Apple AirPlay, Spotify, and other services supported by the Sonos portfolio of speakers. Extended internal functionalities of the speakers, such as radio location, toggle playback state, and more. Developed a cross-platform client application for the Control API that connects to the speakers in a LAN using Electron and React.'
-        ));
+      Experience.find({ '_id': id })
+        .then(experience => resolve(experience))
+        .catch(err => reject(err));
     });
   }
 
-  static addExperience(experience) {
+  static addExperience(newExperience) {
     return new Promise((resolve, reject) => {
-      resolve(experience);
+      console.log(newExperience);
+      const experience = new Experience(newExperience);
+      experience.save()
+        .then(doc => resolve(doc))
+        .catch(err => reject(err));
     });
   }
 
   static getExperiences(limit) {
     return new Promise((resolve, reject) => {
-      resolve(
-        [
-          new Experience(
-            'Software Development Intern - Smart Speaker Platform',
-            'Sonos, Inc.',
-            new Date(2018, 5),
-            undefined,
-            'Work on the platform that supports the integrations between smart voice assistants (Alexa, Google Assistant), Apple AirPlay, Spotify, and other services supported by the Sonos portfolio of speakers. Extended internal functionalities of the speakers, such as radio location, toggle playback state, and more. Developed a cross-platform client application for the Control API that connects to the speakers in a LAN using Electron and React.'
-          ),
-          new Experience(
-            'Software Engineer Intern',
-            'ZOLL Medical Corporation',
-            new Date(2018, 9),
-            new Date(2018, 5),
-            'Work closely with software engineers researching, documenting, and prototyping new technologies to be used in the next generation of ZOLL’s products. Prototyped applications using Bluetooth Low Energy (BLE) and Python. Built and deployed Board Support Packages (BSP) to System on Chip (SoC) and used toolchains to build software packages for different hardware targets.'
-          ),
-          new Experience(
-            'Software Integration Engineer',
-            'IBM',
-            new Date(),
-            new Date(),
-            'Interfaced with client directly to integrate IBM Resilient with multiple applications like SIEMs, ticketing systems, and more using Python, REST and templates. Gathered integration requirements, give demos of custom integration, and provide continuous support for integrations to clients.'
-          ),
-        ]
-      );
+      Experience.find()
+        .then(experiences => resolve(experiences))
+        .catch(err => reject(err));
     });
   }
 
   static updateExperience(id, newExperience) {
     return new Promise((resolve, reject) => {
-      resolve(newExperience);
+      Experience.findOneAndUpdate(
+        { '_id': id },
+        newExperience
+      ).then(doc => resolve(newExperience))
+        .catch(err => reject(err));
     });
   }
 

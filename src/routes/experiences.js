@@ -21,15 +21,23 @@ ExperienceRouter.get('/', (req, res) => {
 });
 
 ExperienceRouter.post('/', (req, res) => {
-  DataManager.addExperience(req.params).then(experience => {
-    res.sendStatus(201);
-  }).catch(err => {
-    res.sendStatus(400);
-  });
+  DataManager.addExperience(req.body)
+    .then(experience => {
+      res.json(experience);
+    }).catch(err => {
+      console.error(err);
+      res.sendStatus(400);
+    });
 });
 
 ExperienceRouter.get('/:id', (req, res) => {
   DataManager.getExperience(req.params.id).then(experience => {
     res.json(experience);
   }).catch(err => res.sendStatus(404));
+});
+
+ExperienceRouter.put('/:id', (req, res) => {
+  DataManager.updateExperience(req.params.id, req.body)
+    .then(newExperience => res.json(newExperience))
+    .catch(err => res.sendStatus(404));
 });

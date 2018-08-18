@@ -30,6 +30,7 @@ MainRouter.put('/profile', (req, res) => {
   DataManager.updateProfile(
     req.body.id, req.body  // WTF is this Dan?
   ).then(newProfile => {
+    console.log(newProfile);
     res.json(newProfile);
   }).catch(err => {
     res.sendStatus(500);
