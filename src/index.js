@@ -3,6 +3,7 @@ import { json } from 'body-parser';
 import cors from 'cors';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
 
 // Dot Env Config
 import { config as DotEnv } from 'dotenv';
@@ -37,6 +38,17 @@ app.use(cors());
 
 // JSON Parser
 app.use(json({ extended: false, limit: '15mb' }));
+
+// Rate Limiter
+const rateLimiter = new RateLimiterMemory();
+app.use((req, res, next) => {
+  rateLimiter.consume(req.connection.remoteAddress)
+    .then(() => {
+      return next();
+    }).catch(rejRes => {
+      return res.sendStatus(429);
+    });
+});
 
 // API Key Validator
 app.use((req, res, next) => {
