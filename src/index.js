@@ -38,6 +38,17 @@ app.use(cors());
 // JSON Parser
 app.use(json({ extended: false, limit: '15mb' }));
 
+// API Key Validator
+app.use((req, res, next) => {
+
+  if (req.headers['z-api-key']
+    && req.headers['z-api-key'] === process.env.API_KEY) {
+    return next();
+  }
+
+  res.sendStatus(401);
+});
+
 // App Routers
 app.use(MainRouter);
 app.use('/experiences', ExperienceRouter);
