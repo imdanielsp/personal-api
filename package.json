@@ -27,7 +27,8 @@
     "mongodb": "^3.1.1",
     "mongoose": "^5.2.7",
     "morgan": "^1.9.0",
-    "rate-limiter-flexible": "^0.16.6"
+    "rate-limiter-flexible": "^0.16.6",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

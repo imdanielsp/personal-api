@@ -1,6 +1,7 @@
 import Skill from '../models/skill';
 import { Experience } from '../models/experience';
 import { Profile } from '../models/profile';
+import uuidv4 from 'uuid/v4';
 
 import AWS from 'aws-sdk';
 
@@ -32,23 +33,40 @@ export default class DataManager {
         newProfile.profilePic.replace(/^data:image\/\w+;base64,/, ''),
         'base64'
       );
+      const pictureName = uuidv4() + '-profile';
 
       S3.putObject({
         Bucket: 'daniel-personal-api',
-        Key: `profile-pic-${newProfile.email}`,
+        Key: pictureName,
         Body: buffer,
         ContentEncoding: 'base64',
         ContentType: 'image/png',
+        ContentDisposition: 'inline',
         ACL: 'public-read'
       }, err => {
         if (err) return reject(err);
-        // Future: update data base.)
-        newProfile.profilePic = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/profile-pic-${newProfile.email}`;
 
-        const profile = new Profile(newProfile);
-        profile.save()
-          .then(profile => resolve(profile))
-          .catch(err => reject(err));
+        const resumeBuffer = new Buffer.from(newProfile.resume, 'base64');
+        const fileName = uuidv4() + '-resume.pdf';
+
+        S3.putObject({
+          Bucket: 'daniel-personal-api',
+          Key: fileName,
+          ContentEncoding: 'base64',
+          ContentType: 'application/pdf',
+          Body: resumeBuffer,
+          ACL: 'public-read'
+        }, err2 => {
+          if (err2) return reject(err);
+
+          newProfile.resume = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/${fileName}`;
+          newProfile.profilePic = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/${pictureName}`;
+
+          const profile = new Profile(newProfile);
+          profile.save()
+            .then(profile => resolve(profile))
+            .catch(err => reject(err));
+        });
       });
     });
   }
@@ -59,25 +77,42 @@ export default class DataManager {
         newProfile.profilePic.replace(/^data:image\/\w+;base64,/, ''),
         'base64'
       );
+      const pictureName = uuidv4() + '-profile';
 
       S3.putObject({
         Bucket: 'daniel-personal-api',
-        Key: `profile-pic-${id}`,
+        Key: pictureName,
         Body: buffer,
         ContentEncoding: 'base64',
         ContentType: 'image/png',
+        ContentDisposition: 'inline',
         ACL: 'public-read'
       }, err => {
         if (err) return reject(err);
-        // Future: update data base.)
-        newProfile.profilePic = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/profile-pic-${id}`;
 
-        Profile.findOneAndUpdate(
-          { '_id': id },
-          newProfile
-        ).then(doc => {
-          resolve(newProfile);
-        }).catch(err => reject(err));
+        const resumeBuffer = new Buffer.from(newProfile.resume, 'base64');
+        const fileName = uuidv4() + '-resume.pdf';
+
+        S3.putObject({
+          Bucket: 'daniel-personal-api',
+          Key: fileName,
+          ContentEncoding: 'base64',
+          ContentType: 'application/pdf',
+          Body: resumeBuffer,
+          ACL: 'public-read'
+        }, err2 => {
+          if (err2) return reject(err);
+
+          newProfile.resume = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/${fileName}`;
+          newProfile.profilePic = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/${pictureName}`;
+
+          Profile.findOneAndUpdate(
+            { '_id': id },
+            newProfile
+          ).then(doc => {
+            resolve(newProfile);
+          }).catch(err => reject(err));
+        });
       });
     });
   }
