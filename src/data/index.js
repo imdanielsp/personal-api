@@ -138,6 +138,7 @@ export default class DataManager {
   static getExperiences(limit) {
     return new Promise((resolve, reject) => {
       Experience.find()
+        .sort({ startDate: -1 })
         .then(experiences => resolve(experiences))
         .catch(err => reject(err));
     });
