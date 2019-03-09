@@ -20,6 +20,9 @@
     "aws-sdk": "^2.291.0",
     "axios": "^0.18.0",
     "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "dotenv": "^6.0.0",
@@ -32,9 +35,6 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-preset-env": "^1.7.0",
     "nodemon": "^1.18.10"
   }
 }
