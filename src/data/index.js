@@ -5,6 +5,9 @@ import uuidv4 from 'uuid/v4';
 
 import AWS from 'aws-sdk';
 
+const BUCKET_NAME = "dsp-personal-api"
+const BUCKET_BASE_URL = `https://s3.us-east-2.amazonaws.com/${BUCKET_NAME}`;
+
 // AWS S3
 const S3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -36,7 +39,7 @@ export default class DataManager {
       const pictureName = uuidv4() + '-profile';
 
       S3.putObject({
-        Bucket: 'daniel-personal-api',
+        Bucket: '${BUCKET_NAME}',
         Key: pictureName,
         Body: buffer,
         ContentEncoding: 'base64',
@@ -50,7 +53,7 @@ export default class DataManager {
         const fileName = uuidv4() + '-resume.pdf';
 
         S3.putObject({
-          Bucket: 'daniel-personal-api',
+          Bucket: '${BUCKET_NAME}',
           Key: fileName,
           ContentEncoding: 'base64',
           ContentType: 'application/pdf',
@@ -59,8 +62,8 @@ export default class DataManager {
         }, err2 => {
           if (err2) return reject(err);
 
-          newProfile.resume = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/${fileName}`;
-          newProfile.profilePic = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/${pictureName}`;
+          newProfile.resume = `${BUCKET_BASE_URL}/${fileName}`;
+          newProfile.profilePic = `${BUCKET_BASE_URL}/${pictureName}`;
 
           const profile = new Profile(newProfile);
           profile.save()
@@ -80,7 +83,7 @@ export default class DataManager {
       const pictureName = uuidv4() + '-profile';
 
       S3.putObject({
-        Bucket: 'daniel-personal-api',
+        Bucket: '${BUCKET_NAME}',
         Key: pictureName,
         Body: buffer,
         ContentEncoding: 'base64',
@@ -94,7 +97,7 @@ export default class DataManager {
         const fileName = uuidv4() + '-resume.pdf';
 
         S3.putObject({
-          Bucket: 'daniel-personal-api',
+          Bucket: '${BUCKET_NAME}',
           Key: fileName,
           ContentEncoding: 'base64',
           ContentType: 'application/pdf',
@@ -103,8 +106,8 @@ export default class DataManager {
         }, err2 => {
           if (err2) return reject(err);
 
-          newProfile.resume = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/${fileName}`;
-          newProfile.profilePic = `https://s3.us-east-2.amazonaws.com/daniel-personal-api/${pictureName}`;
+          newProfile.resume = `${BUCKET_BASE_URL}/${fileName}`;
+          newProfile.profilePic = `${BUCKET_BASE_URL}/${pictureName}`;
 
           Profile.findOneAndUpdate(
             { '_id': id },
